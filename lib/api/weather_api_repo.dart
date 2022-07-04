@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:weather_app/api/location_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants.dart';
@@ -87,7 +86,7 @@ class WeatherApiRepository {
     if (response.statusCode == HttpStatus.ok) {
       final validMap =
           json.decode(json.encode(response.data)) as Map<String, dynamic>;
-      log('response: $validMap');
+     // log('response: $validMap');
       return WeatherForecastDaily.fromJson(validMap);
     } else {
       return Future.error("Error response");

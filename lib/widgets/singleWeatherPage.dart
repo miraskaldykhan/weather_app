@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:weather_app/cubit/weather_daily/weather_daily_cubit.dart';
 import 'package:weather_app/cubit/weather_daily/weather_daily_states.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
-import 'package:weather_app/models/weather_locations.dart';
 import '../constants.dart';
 
 class SingleWeather extends StatefulWidget {
@@ -27,12 +22,14 @@ class _SingleWeatherState extends State<SingleWeather> {
   Widget build(BuildContext context) {
     final WeatherDailyCubit weatherDailyCubit =
         context.read<WeatherDailyCubit>();
-    widget.cityName != null
-        ? weatherDailyCubit.getWeatherDailyInfoWithCity(
-            cityName: widget.cityName!)
-        : weatherDailyCubit.getWeatherDailyInfoWithLonAndLat();
     return BlocBuilder<WeatherDailyCubit, WeatherDailyState>(
       builder: (context, state) {
+        if(state is WeatherDailyInitialState){
+          widget.cityName != null
+              ? weatherDailyCubit.getWeatherDailyInfoWithCity(
+              cityName: widget.cityName!)
+              : weatherDailyCubit.getWeatherDailyInfoWithLonAndLat();
+        }
         if (state is WeatherDailyLoadedState) {
           if (state.forecastDaily.list![0].weather![0].main == 'Rain') {
             bgImg = "assets/rainy.jpg";
@@ -65,8 +62,24 @@ class _SingleWeatherState extends State<SingleWeather> {
                 )),
           ]);
         } else if (state is WeatherDailyErrorState) {
-          return Center(child: Text("Error"),);
-          print(state.message);
+          return Stack(children: [
+            Image.asset(
+              bgImg,
+              fit: BoxFit.cover,
+              height: double.infinity,
+              width: double.infinity,
+            ),
+            Container(
+              decoration: const BoxDecoration(color: Colors.black26),
+            ),
+            Center(
+              child: Text("City not found or another error", style: GoogleFonts.lato(
+                fontSize: 20,
+                color: Colors.redAccent,
+                fontWeight: FontWeight.bold
+              ),),
+            )
+          ]);
         } else {
           return const Center(child: CircularProgressIndicator());
         }

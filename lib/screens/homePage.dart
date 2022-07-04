@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:weather_app/widgets/singleWeatherPage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -51,7 +50,8 @@ class _HomePageState extends State<HomePage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      content: searchCity(locationsListCubit, weatherDailyCubit),
+                      content:
+                          searchCity(locationsListCubit, weatherDailyCubit),
                     );
                   });
             },
@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
           width: MediaQuery.of(context).size.width,
           child: SingleWeather(
             cityName: locationsListCubit.cities.isNotEmpty
-                ? locationsListCubit.cities.first
+                ? locationsListCubit.cities.last
                 : null,
           ),
         ),
@@ -80,14 +80,14 @@ class _HomePageState extends State<HomePage> {
       mainAxisSize: MainAxisSize.min,
       children: [
         TextFormField(
-          style: const TextStyle(fontSize: 20),
+          style: const TextStyle(fontSize: 20, color: Colors.white),
           controller: cityController,
           decoration: const InputDecoration(
             hintText: "City Name",
             hintStyle: TextStyle(fontSize: 20.0, color: Colors.white),
             border: OutlineInputBorder(
               borderSide: BorderSide(
-                color: Colors.black,
+                color: Colors.white,
               ),
               borderRadius: BorderRadius.all(Radius.circular(30)),
             ),
@@ -101,14 +101,15 @@ class _HomePageState extends State<HomePage> {
           width: MediaQuery.of(context).size.width / 4,
           child: ElevatedButton(
             onPressed: () {
-              locationsListCubit.setCities(cityName: cityController.text);
-              locationsListCubit.getCities();
-              // weatherDailyCubit.getWeatherDailyInfoWithCity(cityName: locationsListCubit.cities.last);
-              Navigator.of(context).pop();
-              cityController.clear();
+              if (cityController.text.isNotEmpty) {
+                locationsListCubit.setCities(cityName: cityController.text);
+                weatherDailyCubit.getWeatherDailyInfoWithCity(cityName: cityController.text);
+                Navigator.of(context).pop();
+                cityController.clear();
+              }
             },
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.transparent),
+              backgroundColor: MaterialStateProperty.all(Colors.redAccent),
               shape: MaterialStateProperty.all(RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(100))),
             ),
@@ -124,6 +125,4 @@ class _HomePageState extends State<HomePage> {
       ],
     );
   }
-
-
 }
